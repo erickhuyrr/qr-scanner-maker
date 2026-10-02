@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>QR Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#161a2b;--mu:#6b7186;--ac:#5b4bff;--bd:#e3e6f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10121c;--card:#1a1d2c;--tx:#eceef7;--mu:#9aa0b8;--bd:#2b2f45}}
+:root[data-theme="dark"]{--bg:#10121c;--card:#1a1d2c;--tx:#eceef7;--mu:#9aa0b8;--bd:#2b2f45}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:14px 16px 0;max-width:1000px;margin:auto}h1{margin:0;font-size:22px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:12px 16px;max-width:1000px;margin:auto}
+nav button{white-space:nowrap;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:99px;cursor:pointer;font:inherit}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:1000px;margin:auto;padding:0 16px 40px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:1fr 340px;gap:14px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:12px;color:var(--mu);margin:10px 0 3px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=color]{padding:2px;height:36px}input[type=checkbox]{width:auto}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:110px}
+.btn{background:var(--ac);color:#fff;border:0;padding:9px 14px;border-radius:8px;cursor:pointer;font:inherit;width:auto}
+.btn.s{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}.btn.d{background:#d93a4a}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{border:1px solid var(--bd);background:var(--bg);color:var(--tx);padding:6px 10px;border-radius:8px;cursor:pointer;font:inherit}
+.chips button.on{border-color:var(--ac);background:var(--ac);color:#fff}
+#prev{text-align:center;position:sticky;top:8px}#prev img{max-width:100%;border-radius:8px}
+.item{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--bd);padding:10px 0;flex-wrap:wrap}
+.item img{width:64px;height:64px;border-radius:6px;background:#fff}.item .m{flex:1;min-width:150px;word-break:break-all}.item small{color:var(--mu)}
+.bar{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px}.bar i{display:block;height:10px;background:var(--ac);border-radius:5px}.bar span{min-width:90px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stats div{background:var(--bg);border-radius:10px;padding:10px;text-align:center}.stats b{display:block;font-size:22px}
+video{width:100%;max-height:340px;background:#000;border-radius:10px}.hide{display:none}.mu{color:var(--mu);font-size:13px}
+.tpl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.tpl button{padding:18px 8px;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);cursor:pointer;font:inherit;font-size:15px}
+.tpl button:hover{border-color:var(--ac)}
+</style></head><body>
+<header><h1>▦ QR Studio</h1></header>
+<nav id="nav"></nav>
+<main>
+<section id="t-gen">
+<div class="grid"><div>
+<div class="card"><b>1 · Type</b><div class="chips" id="types" style="margin-top:8px"></div><div id="fields"></div></div>
+<div class="card"><b>2 · Design</b>
+<div class="row"><div><label>QR color</label><input type="color" id="fg" value="#000000"></div><div><label>Background</label><input type="color" id="bg" value="#ffffff"></div>
+<div><label>Eye color</label><input type="color" id="eyec" value="#000000"><label style="display:flex;gap:4px;align-items:center;margin:2px 0 0"><input type="checkbox" id="eyeon"> custom</label></div><div><label>Dot style</label><select id="dot"><option value="square">Square</option><option value="rounded">Rounded</option><option value="dots">Dots</option><option value="diamond">Diamond</option></select></div>
+<div><label>Eye style</label><select id="eye"><option value="square">Square</option><option value="rounded">Rounded</option><option value="circle">Circle</option></select></div></div>
+<div class="row"><div><label>Error correction</label><select id="ec"><option>L</option><option selected>M</option><option>Q</option><option>H</option></select></div>
+<div><label>Logo / photo in center (auto-sets High EC)</label><input type="file" id="logo" accept="image/*"></div></div>
+<div class="row"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="round"> Rounded QR design</label>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="frame"> Frame</label><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="grad"> Gradient</label><div><input type="color" id="fg2" value="#ff2d75"></div><div><input id="ftxt" value="SCAN ME" placeholder="Frame text"></div></div></div>
+<div class="card"><b>3 · Dynamic &amp; Security</b>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="dyn"> Dynamic QR (stable link, destination editable later, scan analytics)</label>
+<div id="secbox" class="hide"><div class="row"><div><label>Password (optional)</label><input id="pw" type="text"></div><div><label>Expiry date (optional)</label><input id="exp" type="datetime-local"></div><div><label>Max scans (0 = unlimited)</label><input id="max" type="number" min="0" value="0"></div></div>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="once"> One-time QR</label>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="off"> Disable this QR</label></div>
+<p class="mu">Dynamic links resolve using this browser's storage. For scans from other phones with real analytics, the resolver needs a server.</p></div>
+</div>
+<div class="card" id="prev"><img id="pimg" alt="QR preview"><p class="mu" id="ptxt" style="word-break:break-all"></p><p id="vbad" class="mu"></p>
+<div class="row"><select id="fmt"><option>PNG</option><option>JPG</option><option>SVG</option><option>PDF</option></select><select id="sz"><option>256</option><option selected>512</option><option>1024</option><option>2048</option></select></div>
+<p><button class="btn" id="dl">⬇ Download</button> <button class="btn s" id="save">💾 Save</button> <button class="btn s" id="new">New</button> <button class="btn s" id="sdt">🎨 Save design</button> <button class="btn s" id="cpi">📋 Copy image</button> <button class="btn s" id="shr">📤 Share</button> <button class="btn s" id="swp">⇄ Swap colors</button> <button class="btn s" id="rnd">🎲 Random style</button></p></div></div>
+</section>
+
+<section id="t-scan" class="hide"><div class="card"><video id="vid" playsinline muted class="hide"></video><canvas id="cv" class="hide"></canvas>
+<p><button class="btn" id="sstart">📷 Start camera</button> <button class="btn s" id="sstop">Stop</button> <label class="btn s" style="display:inline-block;margin:0">🖼 From image<input type="file" id="simg" accept="image/*" class="hide"></label> <label style="display:inline-flex;gap:4px;align-items:center"><input type="checkbox" id="scont"> Continuous</label></p>
+<div id="sres" class="hide card" style="background:var(--bg)"></div></div>
+<div class="card"><b>Scan history</b> <button class="btn s" id="sclr" style="float:right">Clear</button><div id="shist"></div></div></section>
+
+<section id="t-hist" class="hide"><div class="card"><b>Saved QR codes</b> <span style="float:right"><button class="btn s" id="zall">ZIP all</button> <button class="btn s" id="bk">Backup</button> <label class="btn s" style="display:inline-block;margin:0">Restore<input type="file" id="rs" accept=".json" class="hide"></label></span><input id="hq" placeholder="🔍 Search name or folder" style="margin:10px 0"><div id="hist"></div></div></section>
+
+<section id="t-ana" class="hide"><div class="card"><label>Dynamic QR</label><select id="asel"></select><div id="adata"></div></div></section>
+
+<section id="t-bulk" class="hide"><div class="card"><b>Bulk generator</b><p class="mu">One entry per line: <code>value</code> or <code>value,filename</code>. Uses current design. Upload CSV or paste.</p>
+<input type="file" id="csv" accept=".csv,.txt"><label>Entries</label><textarea id="bt" rows="7"></textarea>
+<div class="row"><div><label>Count limit</label><select id="bn"><option>100</option><option>500</option><option>1000</option></select></div><div><label>&nbsp;</label><button class="btn s" id="bfill">Fill sample rows</button></div></div>
+<p><button class="btn" id="bgo">Generate ZIP</button> <button class="btn s" id="bprint">🖨 Print sheet</button> <span id="bst" class="mu"></span></p><p class="mu">Excel: save as CSV first.</p></div></section>
+
+<section id="t-tpl" class="hide"><div class="card"><b>Templates</b><div class="tpl" id="tpl"></div><div id="mytpl"></div></div></section>
+<section id="t-tools" class="hide">
+<div class="card"><b>🔗 UTM link builder</b><div class="row" style="margin-top:8px"><input id="u0" placeholder="https://yoursite.com"><input id="u1" placeholder="source (facebook)"><input id="u2" value="qr" placeholder="medium"><input id="u3" placeholder="campaign"></div><p class="mu" id="uo" style="word-break:break-all"></p><button class="btn s" id="ucp">Copy</button> <button class="btn" id="uqr">Make QR</button></div>
+<div class="card"><b>▮▯ Barcode (Code 39)</b><select id="bty" style="margin-top:8px"><option value="c39">Code 39 (A-Z, 0-9)</option><option value="ean">EAN-13 (product, digits)</option></select><input id="bc" value="HELLO123" style="margin-top:8px" placeholder="A-Z 0-9 - . space"><div id="bco" style="margin:10px 0;overflow-x:auto"></div><button class="btn s" id="bcs">SVG</button> <button class="btn s" id="bcp">PNG</button></div>
+<div class="card"><b>🔐 Password generator</b><div class="row" style="margin-top:8px"><input id="pl" type="number" value="16" min="6" max="64"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="ps" checked> Symbols</label></div><p><code id="po" style="word-break:break-all"></code></p><button class="btn" id="pg">Generate</button> <button class="btn s" id="pcp">Copy</button> <button class="btn s" id="pq">Make QR</button></div>
+</section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9);
+const LS={g:(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8'];
+const esc=t=>String(t).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
+const dt=v=>v?v.replace(/[-:]/g,'').slice(0,15):'';
+const T={
+url:['🔗 URL',[['u','URL','url','https://']],v=>v.u],
+wifi:['📶 Wi-Fi',[['ssid','Network name'],['pass','Password'],['enc','Security','sel','WPA,WEP,nopass']],v=>`WIFI:T:${v.enc||'WPA'};S:${v.ssid||''};P:${v.pass||''};;`],
+vcard:['👤 Contact',[['name','Full name'],['tel','Phone'],['email','Email'],['org','Organization'],['web','Website']],v=>`BEGIN:VCARD\nVERSION:3.0\nFN:${v.name||''}\nORG:${v.org||''}\nTEL:${v.tel||''}\nEMAIL:${v.email||''}\nURL:${v.web||''}\nEND:VCARD`],
+phone:['📱 Phone',[['n','Phone number']],v=>'tel:'+(v.n||'')],
+wa:['💬 WhatsApp',[['n','Number with country code'],['m','Message']],v=>`https://wa.me/${(v.n||'').replace(/\D/g,'')}?text=${encodeURIComponent(v.m||'')}`],
+email:['📧 Email',[['to','To'],['s','Subject'],['b','Body']],v=>`mailto:${v.to||''}?subject=${encodeURIComponent(v.s||'')}&body=${encodeURIComponent(v.b||'')}`],
+geo:['📍 Location',[['la','Latitude'],['lo','Longitude']],v=>`geo:${v.la||0},${v.lo||0}`],
+pay:['💳 Payment',[['pa','Payee ID / UPI address'],['pn','Payee name'],['am','Amount'],['cu','Currency']],v=>`upi://pay?pa=${v.pa||''}&pn=${encodeURIComponent(v.pn||'')}&am=${v.am||''}&cu=${v.cu||'INR'}`],
+event:['📅 Event',[['t','Title'],['st','Start','datetime-local'],['en','End','datetime-local'],['lc','Location']],v=>`BEGIN:VEVENT\nSUMMARY:${v.t||''}\nDTSTART:${dt(v.st)}\nDTEND:${dt(v.en)}\nLOCATION:${v.lc||''}\nEND:VEVENT`],
+sms:['✉️ SMS',[['n','Phone number'],['m','Message']],v=>`SMSTO:${v.n||''}:${v.m||''}`],
+social:['📱 Social profile',[['p','Platform','sel','Instagram,Facebook,YouTube,TikTok,LinkedIn,X (Twitter),Telegram,GitHub,Snapchat'],['h','Username / handle']],v=>{const h=(v.h||'').replace(/^@/,''),b={'Instagram':'instagram.com/','Facebook':'facebook.com/','YouTube':'youtube.com/@','TikTok':'tiktok.com/@','LinkedIn':'linkedin.com/in/','X (Twitter)':'x.com/','Telegram':'t.me/','GitHub':'github.com/','Snapchat':'snapchat.com/add/'};return 'https://'+b[v.p||'Instagram']+h}],
+wagroup:['👥 WhatsApp group',[['c','Group invite code']],v=>'https://chat.whatsapp.com/'+(v.c||'')],
+app:['📲 App download',[['u','Play Store / App Store link','url','https://']],v=>v.u],
+review:['⭐ Google review',[['id','Google Place ID']],v=>'https://search.google.com/local/writereview?placeid='+(v.id||'')],
+meet:['🎥 Meeting (Zoom/Meet)',[['u','Meeting link','url','https://']],v=>v.u],
+music:['🎵 Music / Video',[['u','Spotify / YouTube link','url','https://']],v=>v.u],
+file:['📄 PDF / File link',[['u','Public file link (Drive, Dropbox…)','url','https://']],v=>v.u],
+form:['📝 Feedback form',[['u','Google Form / Typeform link','url','https://']],v=>v.u],
+crypto:['₿ Crypto',[['c','Coin','sel','bitcoin,ethereum,litecoin'],['a','Wallet address'],['am','Amount (optional)']],v=>`${v.c||'bitcoin'}:${v.a||''}${v.am?'?amount='+v.am:''}`],
+coupon:['🎟️ Coupon',[['c','Coupon code'],['d','Offer details','ta']],v=>`COUPON: ${v.c||''}\n${v.d||''}`],
+emerg:['🚑 Emergency / Medical ID',[['n','Name'],['b','Blood group'],['al','Allergies / conditions'],['ec','Emergency contact phone']],v=>`EMERGENCY ID\nName: ${v.n||''}\nBlood: ${v.b||''}\nAllergies: ${v.al||''}\nCall: ${v.ec||''}`],
+lost:['🔑 Lost &amp; Found tag',[['o','Owner name'],['c','Contact phone / email'],['m','Message','ta']],v=>`If found, please contact:\n${v.o||''}\n${v.c||''}\n${v.m||''}`],
+smart:['🔀 Smart app redirect',[['a','Android (Play Store) link','url','https://'],['i','iPhone (App Store) link','url','https://'],['o','Other / desktop link','url','https://']],v=>v.o||v.a||v.i||''],
+menu:['🍽️ Digital menu page',[['t','Restaurant name'],['l','Items, one per line: Item | Price','ta']],v=>v.l||''],
+multi:['🌐 Multi-link page',[['t','Page title'],['l','Links, one per line: Label | URL','ta']],v=>v.l||''],
+text:['📝 Text',[['x','Text','ta']],v=>v.x||'']};
+let type='url',vals={},cur=uid(),logo=null,store=LS.g('qrs',[]);
+const TPL=[['🎫 Event','event',{t:'My Event',lc:'Venue'},{fg:'#7a1fa2',ftxt:'SCAN ME'}],['💳 Payment','pay',{pn:'Shop name'},{fg:'#0a7a4a',ftxt:'SCAN TO PAY'}],['🍽️ Restaurant Menu','url',{u:'https://example.com/menu'},{fg:'#b4400a',ftxt:'VIEW MENU'}],['📶 Wi-Fi','wifi',{ssid:'MyWiFi'},{fg:'#1257c4',ftxt:'JOIN WI-FI'}],['💼 Business Card','vcard',{name:'Your Name'},{fg:'#111111',ftxt:'SAVE CONTACT'}],['🛍️ Product','url',{u:'https://example.com/product'},{fg:'#c41a5a',ftxt:'SHOP NOW'}],['📱 Social Media','url',{u:'https://instagram.com/yourname'},{fg:'#d6249f',ftxt:'FOLLOW ME'}],['⭐ Google Review','review',{},{fg:'#e8a200',ftxt:'RATE US'}],['📲 App Download','app',{u:'https://play.google.com/store/apps/details?id='},{fg:'#0f9d58',ftxt:'GET THE APP'}],['🎟️ Coupon','coupon',{c:'SAVE20',d:'20% off your next order'},{fg:'#d13b2e',ftxt:'CLAIM OFFER'}],['🚑 Medical ID','emerg',{},{fg:'#c8102e',ftxt:'EMERGENCY'}],['🔑 Lost & Found','lost',{},{fg:'#2b2f45',ftxt:'FOUND ME?'}],['📝 Feedback','form',{u:'https://forms.gle/'},{fg:'#5b4bff',ftxt:'GIVE FEEDBACK'}],['💬 WhatsApp Chat','wa',{m:'Hi!'},{fg:'#128c7e',ftxt:'CHAT WITH US'}],['📄 Brochure / PDF','file',{u:'https://'},{fg:'#444444',ftxt:'DOWNLOAD'}]];
+// ---------- nav
+const TABS=[['gen','Create'],['scan','Scanner'],['hist','History'],['ana','Analytics'],['bulk','Bulk'],['tpl','Templates'],['tools','Tools']];
+$('#nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
+function tab(t){TABS.forEach(x=>{$('#t-'+x[0]).classList.toggle('hide',x[0]!=t)});document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==t));if(t!='scan')stopCam();if(t=='tpl')drawMy();if(t=='hist')drawHist();if(t=='ana')drawAna();if(t=='scan')drawScans()}
+$('#nav').onclick=e=>{if(e.target.dataset.t)tab(e.target.dataset.t)};
+// ---------- form
+function drawTypes(){$('#types').innerHTML=Object.keys(T).map(k=>`<button data-k="${k}" class="${k==type?'on':''}">${T[k][0]}</button>`).join('');
+$('#fields').innerHTML=T[type][1].map(f=>{const[k,l,t,x]=f,v=vals[k]||'';return `<label>${l}</label>`+(t=='sel'?`<select data-f="${k}">${x.split(',').map(o=>`<option ${o==v?'selected':''}>${o}</option>`).join('')}</select>`:t=='ta'?`<textarea data-f="${k}" rows="3">${v}</textarea>`:`<input data-f="${k}" type="${t||'text'}" value="${v}" placeholder="${x||''}">`)}).join('')}
+$('#types').onclick=e=>{if(e.target.dataset.k){type=e.target.dataset.k;vals={};drawTypes();render()}};
+$('#fields').oninput=e=>{vals[e.target.dataset.f]=e.target.value;render()};
+document.querySelectorAll('#t-gen input[id],#t-gen select[id]').forEach(el=>el.id!='logo'&&el.id!='fmt'&&el.id!='sz'&&el.addEventListener('input',()=>{$('#secbox').classList.toggle('hide',!$('#dyn').checked);render()}));
+$('#logo').onchange=e=>{const f=e.target.files[0];if(!f){logo=null;return render()}const r=new FileReader();r.onload=()=>{logo=r.result;render()};r.readAsDataURL(f)};
+const opts=()=>({fg:$('#fg').value,bg:$('#bg').value,dot:$('#dot').value,eye:$('#eye').value,ec:$('#ec').value,eyec:$('#eyeon').checked?$('#eyec').value:'',fg2:$('#grad').checked?$('#fg2').value:'',round:$('#round').checked,frame:$('#frame').checked,ftxt:$('#ftxt').value||'SCAN ME',logo});
+const resolver=id=>location.origin+location.pathname+'#/r/'+id;
+const payload=()=>T[type][2](vals);
+const forced=()=>type=='smart'||type=='multi'||type=='menu';
+const encoded=()=>$('#dyn').checked||forced()?resolver(cur):payload();
+// ---------- QR engine (SVG)
+function mk(text,o,px=512){
+const q=qrcode(0,o.logo?'H':o.ec);q.addData(text||' ');q.make();
+const n=q.getModuleCount(),m=4,W=n+2*m,fh=o.frame?6:0,H=W+fh,L=o.logo?Math.round(n*.2):0,c0=(n-L)/2;
+const eyes=[[0,0],[n-7,0],[0,n-7]],inEye=(r,c)=>eyes.some(e=>r>=e[1]&&r<e[1]+7&&c>=e[0]&&c<e[0]+7);
+let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${px}" height="${Math.round(px*H/W)}">`;
+if(o.frame)s+=`<rect width="${W}" height="${H}" rx="2" fill="${o.fg}"/><rect x="1" y="1" width="${W-2}" height="${W-2}" rx="1.5" fill="${o.bg}"/><text x="${W/2}" y="${W+fh/2-.3}" fill="${o.bg}" font-family="Arial,sans-serif" font-weight="700" font-size="2.6" text-anchor="middle" dominant-baseline="middle">${o.ftxt.replace(/[<&]/g,'')}</text>`;
+else s+=`<rect width="${W}" height="${H}" rx="${o.round?3:0}" fill="${o.bg}"/>`;
+const F=o.fg2?'url(#g)':o.fg;s+=`<defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${W}" y2="${W}"><stop offset="0" stop-color="${o.fg}"/><stop offset="1" stop-color="${o.fg2||o.fg}"/></linearGradient></defs><g fill="${F}">`;
+for(let r=0;r<n;r++)for(let c=0;c<n;c++){if(!q.isDark(r,c)||inEye(r,c))continue;if(L&&r>=c0-.5&&r<c0+L+.5&&c>=c0-.5&&c<c0+L+.5)continue;const x=m+c,y=m+r;
+s+=o.dot=='dots'?`<circle cx="${x+.5}" cy="${y+.5}" r=".4"/>`:o.dot=='diamond'?`<path d="M${x+.5} ${y}l.55 .5-.55 .5-.55-.5z"/>`:`<rect x="${x}" y="${y}" width="1.02" height="1.02" rx="${o.dot=='rounded'?.35:0}"/>`}
+s+='</g>';
+const EF=o.eyec||F,er=o.eye=='circle'?3:o.eye=='rounded'?1.6:0,ir=o.eye=='circle'?1.5:o.eye=='rounded'?.8:0;
+eyes.forEach(e=>{const x=m+e[0],y=m+e[1];s+=`<rect x="${x+.5}" y="${y+.5}" width="6" height="6" rx="${er}" fill="none" stroke="${EF}" stroke-width="1"/><rect x="${x+2}" y="${y+2}" width="3" height="3" rx="${ir}" fill="${EF}"/>`});
+if(L)s+=`<rect x="${m+c0-.3}" y="${m+c0-.3}" width="${L+.6}" height="${L+.6}" rx="1.5" fill="${o.bg}"/><image href="${o.logo}" x="${m+c0+.4}" y="${m+c0+.4}" width="${L-.8}" height="${L-.8}" preserveAspectRatio="xMidYMid meet"/>`;
+return s+'</svg>'}
+const lum=h=>{const c=[1,3,5].map(i=>{const v=parseInt(h.substr(i,2),16)/255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]},contrast=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const uri=s=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+function png(svg,fmt='png'){return new Promise(res=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');c.width=i.width||512;c.height=i.height||512;const x=c.getContext('2d');if(fmt=='jpg'){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}x.drawImage(i,0,0,c.width,c.height);c.toBlob(res,fmt=='jpg'?'image/jpeg':'image/png',.95)};i.src=uri(svg)})}
+function verify(t,o){const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=400;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,400,400);x.drawImage(im,0,0,400,im.height*400/im.width);const d=x.getImageData(0,0,400,400);$('#vbad').textContent=jsQR(d.data,400,400)?'✅ Scan test passed':'❌ Scan test failed – raise contrast, use High EC or a smaller logo'};im.src=uri(mk(t,o,400))}
+function render(){$('#secbox').classList.toggle('hide',!$('#dyn').checked&&!forced());const t=encoded();$('#pimg').src=uri(mk(t,opts(),340));const oo=opts();$('#ptxt').textContent=(contrast(oo.fg,oo.bg)<3?'⚠️ Low contrast – may not scan. ':'')+(t.length>140?t.slice(0,140)+'…':t);verify(t,oo)}
+function save(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+async function dlQR(q,fmt,px){fmt=fmt.toLowerCase();const svg=mk(q.text,q.o,px),nm=(q.name||'qr').replace(/[^\w-]+/g,'_');
+if(fmt=='svg')return save(new Blob([svg],{type:'image/svg+xml'}),nm+'.svg');
+if(fmt=='pdf'){const b=await png(svg),d=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});const p=new jspdf.jsPDF({unit:'pt',format:'a4'}),w=420,im=new Image();im.src=d;await im.decode();p.addImage(d,'PNG',(595-w)/2,120,w,w*im.height/im.width);return p.save(nm+'.pdf')}
+save(await png(svg,fmt),nm+'.'+fmt)}
+$('#dl').onclick=()=>dlQR({text:encoded(),o:opts(),name:type+'-qr'},$('#fmt').value,+$('#sz').value);
+// ---------- security + save
+const sha=async s=>{try{return[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('')}catch(e){return btoa(s)}};
+$('#save').onclick=async()=>{const old=store.find(x=>x.id==cur),dyn=$('#dyn').checked||forced(),pwv=$('#pw').value;
+const rec={id:cur,name:old?old.name:(T[type][0]+' '+new Date().toLocaleDateString()),type,vals:{...vals},o:opts(),dyn,dest:payload(),
+pwh:pwv?await sha(pwv):(old&&old.pwh&&!$('#pw').value&&$('#pw').dataset.keep?old.pwh:''),exp:$('#exp').value,max:+$('#max').value||0,once:$('#once').checked,off:$('#off').checked,used:old?old.used:false,scans:old?old.scans:[],created:old?old.created:Date.now()};
+store=store.filter(x=>x.id!=cur);store.unshift(rec);LS.s('qrs',store);alert('Saved to history')};
+$('#new').onclick=()=>{cur=uid();vals={};$('#pw').value='';$('#pw').dataset.keep='';$('#dyn').checked=false;$('#secbox').classList.add('hide');drawTypes();render()};
+function load(id){const r=store.find(x=>x.id==id);if(!r)return;cur=id;type=r.type;vals={...r.vals};logo=r.o.logo;
+['fg','bg','dot','eye','ec','ftxt'].forEach(k=>$('#'+k).value=r.o[k]);$('#round').checked=r.o.round;$('#eyeon').checked=!!r.o.eyec;if(r.o.eyec)$('#eyec').value=r.o.eyec;$('#grad').checked=!!r.o.fg2;if(r.o.fg2)$('#fg2').value=r.o.fg2;$('#frame').checked=r.o.frame;
+$('#dyn').checked=r.dyn;$('#exp').value=r.exp||'';$('#max').value=r.max||0;$('#once').checked=r.once;$('#off').checked=r.off;$('#pw').value='';$('#pw').placeholder=r.pwh?'(password set – type to change)':'';$('#pw').dataset.keep=r.pwh?'1':'';
+$('#secbox').classList.toggle('hide',!r.dyn);drawTypes();render();tab('gen')}
+// ---------- history
+function drawHist(){$('#hist').innerHTML=store.length?store.filter(r=>(r.name+' '+(r.folder||'')).toLowerCase().includes(($('#hq').value||'').toLowerCase())).map(r=>`<div class="item"><img src="${uri(mk(r.dyn?resolver(r.id):T[r.type][2](r.vals),r.o,128))}"><div class="m"><b>${r.name}</b>${r.folder?' <small>📁 '+r.folder+'</small>':''} ${r.dyn?'<small>· dynamic · '+r.scans.length+' scans'+(r.off?' · disabled':'')+'</small>':''}<br><small>${r.dest.slice(0,70)}</small></div>
+<button class="btn s" data-a="ren" data-i="${r.id}">Rename</button><button class="btn s" data-a="edit" data-i="${r.id}">Edit</button><button class="btn s" data-a="dl" data-i="${r.id}">⬇ PNG</button>${r.dyn?`<button class="btn s" data-a="test" data-i="${r.id}">Test scan</button>`:''}<button class="btn s" data-a="clone" data-i="${r.id}">Clone</button><button class="btn s" data-a="fold" data-i="${r.id}">📁</button><button class="btn s" data-a="tog" data-i="${r.id}">${r.off?'Resume':'Pause'}</button><button class="btn d" data-a="del" data-i="${r.id}">Delete</button></div>`).join(''):'<p class="mu">Nothing saved yet.</p>'}
+$('#hist').onclick=e=>{const a=e.target.dataset.a,id=e.target.dataset.i,r=store.find(x=>x.id==id);if(!a)return;
+if(a=='ren'){const n=prompt('New name',r.name);if(n){r.name=n}}
+if(a=='del'&&confirm('Delete this QR?'))store=store.filter(x=>x.id!=id);
+if(a=='edit')return load(id);if(a=='clone')store.unshift({...r,id:uid(),name:r.name+' copy',scans:[],used:false,created:Date.now()});if(a=='fold'){const f=prompt('Folder name',r.folder||'');if(f!==null)r.folder=f}if(a=='tog')r.off=!r.off;
+if(a=='dl')dlQR({text:r.dyn?resolver(r.id):T[r.type][2](r.vals),o:r.o,name:r.name},'png',1024);
+if(a=='test')window.open(resolver(id),'_blank');
+LS.s('qrs',store);drawHist()};
+$('#bk').onclick=()=>save(new Blob([JSON.stringify(store)],{type:'application/json'}),'qr-backup.json');
+$('#rs').onchange=async e=>{try{const a=JSON.parse(await e.target.files[0].text());store=[...a,...store.filter(x=>!a.some(y=>y.id==x.id))];LS.s('qrs',store);drawHist()}catch(x){alert('Invalid backup file')}};
+// ---------- analytics
+const cnt=(a,f)=>{const m={};a.forEach(x=>{const k=f(x);m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1])};
+const bars=(t,e)=>{const mx=Math.max(1,...e.map(x=>x[1]));return `<h4>${t}</h4>`+(e.length?e.map(x=>`<div class="bar"><span>${x[0]}</span><i style="width:${x[1]/mx*60}%"></i>${x[1]}</div>`).join(''):'<p class="mu">No data</p>')};
+function drawAna(){const d=store.filter(r=>r.dyn);$('#asel').innerHTML=d.map(r=>`<option value="${r.id}">${r.name}</option>`).join('')||'<option>No dynamic QR yet</option>';anaShow()}
+function anaShow(){const r=store.find(x=>x.id==$('#asel').value);if(!r){$('#adata').innerHTML='<p class="mu">Create and save a Dynamic QR, then open its link ("Test scan" in History).</p>';return}
+const s=r.scans,now=Date.now(),D=864e5,t0=new Date().setHours(0,0,0,0);
+$('#adata').innerHTML=`<div class="stats" style="margin-top:12px"><div><b>${s.length}</b>Total</div><div><b>${s.filter(x=>x.t>=t0).length}</b>Today</div><div><b>${s.filter(x=>x.t>now-7*D).length}</b>7 days</div><div><b>${s.filter(x=>x.t>now-30*D).length}</b>30 days</div></div>
+<div class="row"><div>${bars('Country',cnt(s,x=>x.country))}</div><div>${bars('Device',cnt(s,x=>x.device))}</div><div>${bars('Browser',cnt(s,x=>x.browser))}</div></div>
+${bars('Time of day (hour)',cnt(s,x=>String(new Date(x.t).getHours()).padStart(2,'0')+':00').sort())}
+<h4>Destination</h4><input id="ndest" value="${r.dest.replace(/"/g,'&quot;')}"> <p><button class="btn" id="udest">Update destination</button> <button class="btn s" id="acsv">Export scans CSV</button> <span class="mu">QR image stays the same.</span></p>`;
+$('#udest').onclick=()=>{r.dest=$('#ndest').value;LS.s('qrs',store);alert('Destination updated')};$('#acsv').onclick=()=>save(new Blob(['time,country,device,browser\n'+s.map(x=>[new Date(x.t).toISOString(),x.country,x.device,x.browser].join(',')).join('\n')],{type:'text/csv'}),'scans.csv')}
+$('#asel').onchange=anaShow;
+// ---------- scanner
+let lastv='',lastt=0,stream=null,raf=0,sc=LS.g('scans',[]);
+function stopCam(){cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('#vid').classList.add('hide')}
+function kind(t){return /^https?:/i.test(t)?'🔗 Link':/^WIFI:/i.test(t)?'📶 Wi-Fi':/^BEGIN:VCARD/i.test(t)?'👤 Contact':/^BEGIN:VEVENT/i.test(t)?'📅 Event':/^tel:/i.test(t)?'📱 Phone':/^mailto:/i.test(t)?'📧 Email':/^geo:/i.test(t)?'📍 Location':/^(SMSTO|sms):/i.test(t)?'✉️ SMS':/^(upi:|bitcoin:|ethereum:|litecoin:)/i.test(t)?'💳 Payment':'📝 Text'}
+function found(txt){if(!txt)return;const k=kind(txt),g=re=>(txt.match(re)||[])[1]||'';let ex='',btn='';const A='target="_blank" rel="noopener" style="text-decoration:none"';
+if(k=='📶 Wi-Fi')ex=`<p>Network: <b>${esc(g(/S:([^;]*)/))}</b><br>Password: <b>${esc(g(/P:([^;]*)/))}</b></p>`;
+if(/^(https?:|tel:|mailto:)/i.test(txt))btn=`<a class="btn" href="${esc(txt)}" ${A}>Open</a>`;
+if(k=='📍 Location')btn=`<a class="btn" href="https://www.google.com/maps?q=${encodeURIComponent(txt.slice(4).split('?')[0])}" ${A}>Open map</a>`;
+if(k=='👤 Contact')btn='<button class="btn" id="vcf">Save contact (.vcf)</button>';
+if(k=='📅 Event')btn='<button class="btn" id="ics">Add to calendar (.ics)</button>';
+$('#sres').classList.remove('hide');
+$('#sres').innerHTML=`<b>${k}</b><p style="word-break:break-all;white-space:pre-wrap">${esc(txt)}</p>${ex}<button class="btn s" id="cp">Copy</button> ${btn}`;
+if($('#vcf'))$('#vcf').onclick=()=>save(new Blob([txt],{type:'text/vcard'}),'contact.vcf');
+if($('#ics'))$('#ics').onclick=()=>save(new Blob(['BEGIN:VCALENDAR\nVERSION:2.0\n'+txt+'\nEND:VCALENDAR'],{type:'text/calendar'}),'event.ics');
+$('#cp').onclick=()=>navigator.clipboard&&navigator.clipboard.writeText(txt);
+sc.unshift({t:Date.now(),v:txt});sc=sc.slice(0,100);LS.s('scans',sc);drawScans()}
+function drawScans(){$('#shist').innerHTML=sc.length?sc.map(x=>`<div class="item"><div class="m">${x.v.slice(0,120).replace(/</g,'&lt;')}<br><small>${new Date(x.t).toLocaleString()}</small></div></div>`).join(''):'<p class="mu">No scans yet.</p>'}
+$('#sclr').onclick=()=>{sc=[];LS.s('scans',sc);drawScans()};$('#sstop').onclick=stopCam;
+$('#sstart').onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const v=$('#vid');v.srcObject=stream;v.classList.remove('hide');await v.play();const c=$('#cv'),x=c.getContext('2d',{willReadFrequently:true});
+const tick=()=>{if(!stream)return;if(v.readyState>=2){c.width=v.videoWidth;c.height=v.videoHeight;x.drawImage(v,0,0);const d=x.getImageData(0,0,c.width,c.height),r=jsQR(d.data,d.width,d.height);if(r&&r.data&&(r.data!=lastv||Date.now()-lastt>3000)){lastv=r.data;lastt=Date.now();found(r.data);if(!$('#scont').checked){stopCam();return}}}raf=requestAnimationFrame(tick)};tick()}catch(e){alert('Camera unavailable: '+e.message+'. Try "From image".')}};
+$('#simg').onchange=e=>{const f=e.target.files[0];if(!f)return;const i=new Image();i.onload=()=>{const c=$('#cv'),x=c.getContext('2d');c.width=i.width;c.height=i.height;x.drawImage(i,0,0);const d=x.getImageData(0,0,c.width,c.height),r=jsQR(d.data,d.width,d.height);r?found(r.data):alert('No QR found in image')};i.src=URL.createObjectURL(f)};
+// ---------- bulk
+$('#csv').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>$('#bt').value=t)};
+$('#bfill').onclick=()=>{const n=+$('#bn').value;$('#bt').value=Array.from({length:n},(_,i)=>`https://example.com/item/${i+1},item_${i+1}`).join('\n')};
+$('#bgo').onclick=async()=>{const rows=$('#bt').value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).slice(0,+$('#bn').value);if(!rows.length)return alert('Add some entries');
+const z=new JSZip(),o=opts();for(let i=0;i<rows.length;i++){const k=rows[i].lastIndexOf(','),hasN=k>0&&!/^https?:\/\/[^,]*$/.test(rows[i])||k>8&&/,[\w .-]+$/.test(rows[i]),v=hasN?rows[i].slice(0,k):rows[i],nm=hasN?rows[i].slice(k+1).trim():'qr_'+String(i+1).padStart(4,'0');
+z.file(nm.replace(/[^\w.-]+/g,'_')+'.png',await png(mk(v,o,512)));if(i%10==0){$('#bst').textContent=`Generating ${i+1}/${rows.length}…`;await new Promise(r=>setTimeout(r))}}
+$('#bst').textContent='Zipping…';save(await z.generateAsync({type:'blob'}),'qr-codes.zip');$('#bst').textContent=`Done: ${rows.length} QR codes`};
+$('#bprint').onclick=()=>{const rows=$('#bt').value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).slice(0,+$('#bn').value);if(!rows.length)return alert('Add some entries');const o=opts(),w=window.open('','_blank');if(!w)return alert('Allow popups to print');
+w.document.write('<title>QR sheet</title><style>body{margin:10mm;font:11px sans-serif}div{display:inline-block;width:45mm;margin:2mm;text-align:center;page-break-inside:avoid}img{width:42mm}</style>'+rows.map(r=>{const k=r.lastIndexOf(','),n=k>8;return `<div><img src="${uri(mk(n?r.slice(0,k):r,o,300))}"><br>${n?r.slice(k+1).replace(/</g,'&lt;'):''}</div>`}).join(''));w.document.close();setTimeout(()=>w.print(),500)};
+// ---------- templates
+$('#tpl').innerHTML=TPL.map((t,i)=>`<button data-i="${i}">${t[0]}</button>`).join('');
+$('#tpl').onclick=e=>{const i=e.target.dataset.i;if(i==null)return;const t=TPL[i];cur=uid();type=t[1];vals={...t[2]};$('#fg').value=t[3].fg;$('#ftxt').value=t[3].ftxt;$('#frame').checked=true;$('#round').checked=true;$('#eye').value='rounded';$('#dot').value='rounded';drawTypes();render();tab('gen')};
+$('#hq').oninput=drawHist;
+let dtp=LS.g('dtpl',[]);
+$('#sdt').onclick=()=>{const n=prompt('Design name');if(!n)return;dtp.push({n,o:{...opts(),logo:null}});LS.s('dtpl',dtp);alert('Saved in Templates → My designs')};
+function drawMy(){$('#mytpl').innerHTML=dtp.length?'<h4>My designs</h4><div class="tpl">'+dtp.map((d,i)=>`<button data-d="${i}">${d.n.replace(/</g,'&lt;')}</button>`).join('')+'</div>':''}
+$('#mytpl').onclick=e=>{if(e.target.dataset.d==null)return;const o=dtp[e.target.dataset.d].o;['fg','bg','dot','eye','ec','ftxt'].forEach(k=>$('#'+k).value=o[k]);$('#round').checked=o.round;$('#frame').checked=o.frame;$('#grad').checked=!!o.fg2;if(o.fg2)$('#fg2').value=o.fg2;$('#eyeon').checked=!!o.eyec;if(o.eyec)$('#eyec').value=o.eyec;render();tab('gen')};
+$('#cpi').onclick=async()=>{try{const b=await png(mk(encoded(),opts(),512));await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);alert('Image copied')}catch(e){alert('Copy not supported here – use Download')}};
+$('#shr').onclick=async()=>{try{const b=await png(mk(encoded(),opts(),512)),f=new File([b],'qr.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'QR code'});else await navigator.share({text:encoded()})}catch(e){alert('Sharing not supported here')}};
+$('#swp').onclick=()=>{const a=$('#fg').value;$('#fg').value=$('#bg').value;$('#bg').value=a;render()};
+$('#rnd').onclick=()=>{const h=()=>'#'+[0,0,0].map(()=>Math.floor(Math.random()*150).toString(16).padStart(2,'0')).join(''),pk=a=>a[Math.floor(Math.random()*a.length)];$('#fg').value=h();$('#fg2').value=h();$('#grad').checked=Math.random()>.5;$('#dot').value=pk(['square','rounded','dots','diamond']);$('#eye').value=pk(['square','rounded','circle']);$('#round').checked=Math.random()>.5;render()};
+$('#zall').onclick=async()=>{if(!store.length)return alert('Nothing saved');const z=new JSZip();for(const r of store)z.file((r.folder?r.folder.replace(/[^\w -]/g,'')+'/':'')+r.name.replace(/[^\w.-]+/g,'_')+'-'+r.id+'.png',await png(mk(r.dyn?resolver(r.id):T[r.type][2](r.vals),r.o,1024)));save(await z.generateAsync({type:'blob'}),'my-qr-codes.zip')};
+// ---------- tools
+function toQR(t,v){cur=uid();type=t;vals=v;drawTypes();render();tab('gen')}
+const utm=()=>{const u=$('#u0').value.trim();if(!u)return '';const p=[['utm_source','u1'],['utm_medium','u2'],['utm_campaign','u3']].filter(x=>$('#'+x[1]).value).map(x=>x[0]+'='+encodeURIComponent($('#'+x[1]).value)).join('&');return u+(p?(u.includes('?')?'&':'?')+p:'')};
+['u0','u1','u2','u3'].forEach(i=>$('#'+i).oninput=()=>$('#uo').textContent=utm());
+$('#ucp').onclick=()=>navigator.clipboard&&navigator.clipboard.writeText(utm());$('#uqr').onclick=()=>toQR('url',{u:utm()});
+const C39={'0':'nnnwwnwnn','1':'wnnwnnnnw','2':'nnwwnnnnw','3':'wnwwnnnnn','4':'nnnwwnnnw','5':'wnnwwnnnn','6':'nnwwwnnnn','7':'nnnwnnwnw','8':'wnnwnnwnn','9':'nnwwnnwnn','A':'wnnnnwnnw','B':'nnwnnwnnw','C':'wnwnnwnnn','D':'nnnnwwnnw','E':'wnnnwwnnn','F':'nnwnwwnnn','G':'nnnnnwwnw','H':'wnnnnwwnn','I':'nnwnnwwnn','J':'nnnnwwwnn','K':'wnnnnnnww','L':'nnwnnnnww','M':'wnwnnnnwn','N':'nnnnwnnww','O':'wnnnwnnwn','P':'nnwnwnnwn','Q':'nnnnnnwww','R':'wnnnnnwwn','S':'nnwnnnwwn','T':'nnnnwnwwn','U':'wwnnnnnnw','V':'nwwnnnnnw','W':'wwwnnnnnn','X':'nwnnwnnnw','Y':'wwnnwnnnn','Z':'nwwnwnnnn','-':'nwnnnnwnw','.':'wwnnnnwnn',' ':'nwwnnnwnn','*':'nwnnwnwnn'};
+function barcode(t){t=t.toUpperCase().replace(/[^0-9A-Z\-. ]/g,'');let x=10,b='';for(const ch of '*'+t+'*'){const q=C39[ch];for(let i=0;i<9;i++){const w=q[i]=='w'?3:1;if(i%2==0)b+=`<rect x="${x}" y="0" width="${w}" height="60" fill="#000"/>`;x+=w}x+=1}
+return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${x+9} 80" width="${(x+9)*3}" height="240"><rect width="100%" height="100%" fill="#fff"/>${b}<text x="${(x+9)/2}" y="76" font-family="monospace" font-size="11" text-anchor="middle">${t}</text></svg>`}
+function ean13(t){let d=t.replace(/\D/g,'').slice(0,12).padEnd(12,'0');d+=(10-d.split('').reduce((a,c,i)=>a+ +c*(i%2?3:1),0)%10)%10;
+const L=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'],P=['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'],inv=q=>q.replace(/./g,c=>c=='0'?'1':'0');
+let bits='101';for(let i=0;i<6;i++){const l=L[+d[i+1]];bits+=P[d[0]][i]=='L'?l:[...inv(l)].reverse().join('')}bits+='01010';for(let i=7;i<13;i++)bits+=inv(L[+d[i]]);bits+='101';
+let b='';[...bits].forEach((c,i)=>{if(c=='1'){const g=i<3||(i>=45&&i<50)||i>=92;b+=`<rect x="${11+i}" y="0" width="1" height="${g?60:55}" fill="#000"/>`}});
+let tx=`<text x="4" y="68" font-size="8" font-family="monospace" text-anchor="middle">${d[0]}</text>`;for(let i=1;i<13;i++)tx+=`<text x="${i<7?14+(i-1)*7+3.5:11+50+(i-7)*7+3.5}" y="68" font-size="8" font-family="monospace" text-anchor="middle">${d[i]}</text>`;
+return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117 72" width="468" height="288"><rect width="117" height="72" fill="#fff"/>${b}${tx}</svg>`}
+const bcg=()=>$('#bty').value=='ean'?ean13($('#bc').value):barcode($('#bc').value);
+const bcd=()=>{$('#bco').innerHTML=bcg()};$('#bc').oninput=bcd;$('#bty').onchange=bcd;bcd();
+$('#bcs').onclick=()=>save(new Blob([bcg()],{type:'image/svg+xml'}),'barcode.svg');
+$('#bcp').onclick=async()=>save(await png(bcg()),'barcode.png');
+const pwg=()=>{const L=Math.min(64,Math.max(6,+$('#pl').value||16)),ch='abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'+($('#ps').checked?'!@#$%^&*-_=+?':''),a=new Uint32Array(L);crypto.getRandomValues(a);$('#po').textContent=[...a].map(n=>ch[n%ch.length]).join('')};
+$('#pg').onclick=pwg;pwg();$('#pcp').onclick=()=>navigator.clipboard&&navigator.clipboard.writeText($('#po').textContent);$('#pq').onclick=()=>toQR('text',{x:$('#po').textContent});
+// ---------- resolver (opened via dynamic link)
+async function resolve(id){document.body.innerHTML='<div style="max-width:420px;margin:12vh auto;padding:20px;text-align:center;font-family:system-ui;color:var(--tx)" id="rv"></div>';
+const rv=document.getElementById('rv'),msg=m=>rv.innerHTML=`<h2>${m}</h2>`,r=LS.g('qrs',[]).find(x=>x.id==id);
+if(!r)return msg('QR not found in this browser');if(r.off)return msg('🚫 This QR has been disabled');
+if(r.exp&&new Date(r.exp)<new Date())return msg('⌛ This QR has expired');if(r.max&&r.scans.length>=r.max)return msg('🚫 Scan limit reached');if(r.once&&r.used)return msg('1️⃣ This one-time QR was already used');
+const go=()=>{const all=LS.g('qrs',[]),q=all.find(x=>x.id==id),ua=navigator.userAgent;
+q.scans.push({t:Date.now(),country:(navigator.language.split('-')[1]||Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown').toUpperCase(),device:/iPad|Tablet/.test(ua)?'Tablet':/Mobi|Android|iPhone/.test(ua)?'Mobile':'Desktop',browser:/Edg\//.test(ua)?'Edge':/OPR\//.test(ua)?'Opera':/Chrome\//.test(ua)?'Chrome':/Firefox\//.test(ua)?'Firefox':/Safari\//.test(ua)?'Safari':'Other'});
+if(q.once)q.used=true;LS.s('qrs',all);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');if(q.type=='smart'){const v=q.vals,u=/iPhone|iPad/.test(ua)?v.i:/Android/.test(ua)?v.a:v.o,d=u||v.o||v.a||v.i||'';if(/^https?:/i.test(d))location.href=d;else rv.innerHTML='<h2>No link set</h2>'}else if(q.type=='multi'){const ls=(q.vals.l||'').split('\n').map(x=>x.split('|')).filter(x=>/^(https?:|tel:|mailto:)/i.test((x[1]||'').trim()));rv.innerHTML=`<h2>${esc(q.vals.t||'My links')}</h2>`+ls.map(x=>`<a href="${esc(x[1].trim())}" style="display:block;margin:10px 0;padding:14px;border-radius:12px;background:#5b4bff;color:#fff;text-decoration:none">${esc(x[0].trim())}</a>`).join('')}else if(q.type=='menu'){rv.innerHTML=`<h2>${esc(q.vals.t||'Menu')}</h2>`+(q.vals.l||'').split('\n').filter(Boolean).map(x=>{const p=x.split('|');return `<div style="display:flex;justify-content:space-between;border-bottom:1px solid #8884;padding:10px 0;text-align:left"><span>${esc(p[0].trim())}</span><b>${esc((p[1]||'').trim())}</b></div>`}).join('')}else if(/^(https?:|tel:|mailto:|geo:|upi:|sms:)/i.test(q.dest))location.href=q.dest;else rv.innerHTML=`<h3>QR content</h3><pre style="white-space:pre-wrap;text-align:left">${q.dest.replace(/</g,'&lt;')}</pre>`};
+if(r.pwh){rv.innerHTML='<h2>🔒 Password required</h2><input id="rp" type="password" style="width:100%;padding:10px"><p><button id="rb" style="padding:10px 18px">Unlock</button></p><p id="re" style="color:#d93a4a"></p>';
+document.getElementById('rb').onclick=async()=>{(await sha(document.getElementById('rp').value))==r.pwh?go():document.getElementById('re').textContent='Wrong password'}}else go()}
+if(location.hash.startsWith('#/r/'))resolve(location.hash.slice(4));
+else{drawTypes();render();tab('gen')}
+</script></body></html>
